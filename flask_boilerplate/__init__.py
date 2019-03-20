@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 
 
 def create_app(test_config=None):
@@ -13,9 +13,30 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
 
+
     @app.route('/')
     def index():
-        return 'Hello World!'
+        return 'This is a flask-boilerplate project, not to be used in production.'
+
+
+    @app.route('/hello')
+    def hello():
+        name = request.args.get('name', 'World')
+        return f"Hello {name}!"
+
+
+    @app.route('/number/<int:n>')
+    def number_route(n):
+        return f"Number: {n}"
 
     return app
+
+
+
+
+
+
+
+
+
 
