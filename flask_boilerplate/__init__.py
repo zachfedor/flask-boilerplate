@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, render_template
 
 
 def create_app(test_config=None):
@@ -6,6 +6,8 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='dev',
+        DB_NAME='flask_boilerplate',
+        DB_USER='flask_boilerplate_user'
     )
 
     if test_config is None:
@@ -13,21 +15,21 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
 
+    from . import db
+    db.init_app(app)
 
+    # Register Blueprints
     @app.route('/')
     def index():
-        return 'This is a flask-boilerplate project, not to be used in production.'
+        return render_template('index.html')
 
+    from . import auth
+    app.register_blueprint(auth.bp)
 
-    @app.route('/hello')
-    def hello():
-        name = request.args.get('name', 'World')
-        return f"Hello {name}!"
-
-
-    @app.route('/number/<int:n>')
-    def number_route(n):
-        return f"Number: {n}"
+    @app.route('/private')
+    @auth.login_required
+    def private():
+        return 'Secret Message'
 
     return app
 

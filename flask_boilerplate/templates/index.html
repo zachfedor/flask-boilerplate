@@ -1,0 +1,8 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Flask Boilerplate{% endblock %}
+
+{% block content %}
+  <p>Hello, {{ g.user['email'] or 'guest' }}.</p>
+{% endblock %}
+

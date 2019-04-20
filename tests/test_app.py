@@ -5,38 +5,18 @@ def test_config():
     assert not create_app().testing
     assert create_app({'TESTING': True}).testing
 
+
 def test_index(client):
     response = client.get('/')
-    assert response.data == b'This is a flask-boilerplate project, not to be used in production.'
-
-def test_hello(client):
-    response = client.get('/hello')
-    assert response.data == b'Hello World!'
-
-    response = client.get('/hello?name=Jim')
-    assert response.data == b'Hello Jim!'
+    assert b'Flask Boilerplate' in response.data
 
 
-def test_number(client):
-    response = client.get('/number/1')
-    assert response.data == b'Number: 1'
+def test_protected(client, auth):
+    response = client.get('/private')
+    assert b'Secret Message' not in response.data
 
-    response = client.get('/number/2')
-    assert response.data == b'Number: 2'
-
-    response = client.get('/number/apple')
-    assert response.status_code == 404
-
-
-
-
-
-
-
-
-
-
-
-
+    auth.login()
+    response = client.get('/private')
+    assert b'Secret Message' in response.data
 
 
